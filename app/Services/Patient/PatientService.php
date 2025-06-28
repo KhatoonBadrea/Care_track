@@ -18,14 +18,13 @@ class PatientService
 
             $patient = Patient::create([
                 'user_id' => $data['user_id'],
-                'relative_id'=>$data['relative_id'],
+                'relative_id' => $data['relative_id'],
                 'gender' => $data['gender'],
                 'birth_date' => $data['birth_date'],
                 'notes' => $data['notes'] ?? null,
                 'blood_clique_id' => $data['blood_clique_id'],
             ]);
 
-            // dd($patient);
             return new ServiceResult(true, $patient);
         } catch (Exception $e) {
             Log::error('Failed to create patient: ' . $e->getMessage());
@@ -40,38 +39,21 @@ class PatientService
     public function assignDoctors(Patient $patient, array $doctorIds)
     {
         try {
+            $validDoctorIds = Doctor::whereIn('id', $doctorIds)->pluck('id')->toArray();
 
-// dd($patient);            
-            $doctors = Doctor::whereIn('id', $doctorIds)
-                ->pluck('id')
-                ->toArray();
+            $patient->doctors()->syncWithoutDetaching($validDoctorIds);
 
-                // dd($doctors);
-            // if (count($validDoctorUserIds) !== count($doctorIds)) {
-            //     return new ServiceResult(false, null, "One or more IDs are not valid doctors");
-            // }
+            $doctors = Doctor::with('user')->whereIn('id', $validDoctorIds)->get();
 
-            // إسناد الأطباء بدون تكرار (مريض-دكتور من جدول doctor_patient)
-            $patient->doctors()->syncWithoutDetaching(
-                Doctor::whereIn('id', $doctors)->pluck('id')->toArray()
-            );
-            // dd( $patient->doctors()->syncWithoutDetaching(
-            //     Doctor::whereIn('id', $doctors)->pluck('id')->toArray()
-            // ));
-
-            // إرجاع كولكشن دكاترة مع علاقة user محملة
-            $patientsWithDoctors = Doctor::with('user')
-                ->whereIn('user_id', $doctors)
-                ->get();
-                dd($patientsWithDoctors);
-            return new ServiceResult(true, $patientsWithDoctors);
+            return new ServiceResult(true, [
+                'patient' => $patient->load('user'),
+                'doctors' => $doctors,
+            ]);
         } catch (Exception $e) {
             Log::error('Failed to assign doctors: ' . $e->getMessage());
-            return new ServiceResult(false, null, "Error:Faild to assign doctors");
+            return new ServiceResult(false, null, "Error: Failed to assign doctors");
         }
     }
-
-
 
 
 
@@ -92,6 +74,8 @@ class PatientService
             return new ServiceResult(false, null, "Error:Faild to update patient");
         }
     }
+
+
 
     public function delete(Patient $patient)
     {

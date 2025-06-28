@@ -20,19 +20,22 @@ class PatientController extends Controller
 
     public function __construct(private PatientService $patientService) {}
 
+
+
     public function index()
     {
         $patients = Patient::with(['user', 'bloodClique', 'doctors', 'relative'])->get();
         return PatientResource::collection($patients);
     }
 
+
+
+
     public function store(StorePatientRequest $request)
     {
-       
 
         $patient = $this->patientService->create($request->validated());
-        // dd($patient);
-    
+
         if ($patient->success) {
             return $this->success([
                 'message' => 'patient created successfully',
@@ -49,21 +52,15 @@ class PatientController extends Controller
 
 
 
+
     public function assignDoctors(Request $request, Patient $patient)
     {
+        $doctorIds = $request->input('doctor_ids', []);
 
-        // $validated = $request->validated();
+        $doctors = $this->patientService->assignDoctors($patient, $doctorIds);
 
-        $doctors = $this->patientService->assignDoctors($patient, $request['doctor_ids']);
-
-        // return new AssignDoctorsResource([
-        //     'patient' => $patient,
-        //     'doctors' => $doctors, 
-        // ]);
         if ($doctors->success) {
-            return $this->success(
-                // 'data' => new AssignDoctorsResource($doctors->data)
-            );
+            return $this->success(new AssignDoctorsResource($doctors->data));
         } else {
             return $this->error(
                 null,
@@ -78,16 +75,17 @@ class PatientController extends Controller
 
     public function show(Patient $patient)
     {
-        $patient->load(['user', 'bloodClique', 'doctors','relative']);
+        $patient->load(['user', 'bloodClique', 'doctors', 'relative']);
         return $this->success(new PatientResource($patient));
     }
 
+
+
+
     public function update(UpdatePatientRequest $request, Patient $patient)
     {
-        
 
         $patient = $this->patientService->update($patient, $request->validated());
-        // return new PatientResource($patient);
         if ($patient->success) {
             return $this->success([
                 'message' => 'patient update successfully',
@@ -101,10 +99,12 @@ class PatientController extends Controller
             );
         }
     }
+
+
+
+
     public function destroy(Patient $patient)
     {
-       
-
         $this->patientService->delete($patient);
         if ($patient->success) {
             return $this->success([
@@ -119,17 +119,4 @@ class PatientController extends Controller
             );
         }
     }
-
-    //  if ($result->success) {
-    //         return $this->success([
-    //             'message' => 'this is the selected user',
-    //             'data' => new UserResource($result->data)
-    //         ]);
-    //     } else {
-    //         return $this->error(
-    //             null,
-    //             $result->message,
-    //             404
-    //         );
-    //     }
 }

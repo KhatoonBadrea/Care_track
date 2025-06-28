@@ -15,9 +15,9 @@ class AssignDoctorsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-       return [
+        return [
             'patient' => new PatientResource($this['patient']),
-            'doctors' => DoctorResource::collection($this['doctors']),  
+            'doctors' => DoctorResource::collection($this['doctors']),
         ];
     }
 }
