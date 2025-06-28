@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Doctor\DoctorController;
 use App\Http\Controllers\Api\Patient\PatientController;
 use App\Http\Controllers\Api\Relative\RelativeController;
 use App\Http\Controllers\Api\User\UserController;
+use App\Http\Controllers\Api\VitalSign\VitalSignController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -15,8 +16,6 @@ Route::middleware('auth:api')->group(function () {
     Route::post('refresh', [AuthController::class, 'refresh']);
 });
 
-Route::get( 'doctors/{doctor}',[DoctorController::class, 'show'])->middleware(['auth:api', 'role:doctor,admin']);
-Route::get('/relative/{relativeId}/patients', [RelativeController::class, 'showPatientDetails'])->middleware(['auth:api', 'role:relative,admin']);
 
 //========================== admin route
 
@@ -28,13 +27,21 @@ Route::middleware(['auth:api', 'role:admin'])->prefix('admin')->group(function (
 
     Route::apiResource('patients', PatientController::class);
     Route::post('patients/{patient}/assign-doctors', [PatientController::class, 'assignDoctors']);
-
-
+    
+    
     Route::apiResource('relatives', RelativeController::class);
 });
 
-// Route::middleware(['auth:api', 'role:relative'])->group(function () {
+// =========================Doctor Route
+Route::get( 'doctors/{doctor}',[DoctorController::class, 'show'])->middleware(['auth:api', 'role:doctor,admin']);
 
-//     Route::get('relatives/{relative}/patient', [RelativeController::class, 'showPatientDetails']);
-// });
+//=========================Relative Route
+Route::get('/relative/{relativeId}/patients', [RelativeController::class, 'showPatientDetails'])->middleware(['auth:api', 'role:relative,admin']);
 
+
+//========================Patient Route
+
+Route::middleware(['auth:api', 'role:patient'])->group(function () {
+
+});
+Route::apiResource('vitalSign', VitalSignController::class);

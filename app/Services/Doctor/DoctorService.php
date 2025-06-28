@@ -41,7 +41,7 @@ class DoctorService
     }
 
 
-      public function delete(Doctor $doctor)
+    public function delete(Doctor $doctor)
     {
         try {
 
@@ -55,5 +55,4 @@ class DoctorService
             return new ServiceResult(false, null, "Error:Faild to delete doctor");
         }
     }
-
 }

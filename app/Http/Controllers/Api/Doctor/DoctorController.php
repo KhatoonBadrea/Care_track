@@ -92,5 +92,4 @@ class DoctorController extends Controller
             ])
             : $this->error(null, $deletion->message, 401);
     }
-
 }
