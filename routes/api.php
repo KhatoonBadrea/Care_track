@@ -15,7 +15,10 @@ Route::middleware('auth:api')->group(function () {
     Route::post('refresh', [AuthController::class, 'refresh']);
 });
 
-Route::get( 'doctors/{doctor}',[DoctorController::class, 'show'])->middleware(['auth:api', 'role:doctor|admin']);
+Route::get( 'doctors/{doctor}',[DoctorController::class, 'show'])->middleware(['auth:api', 'role:doctor,admin']);
+Route::get('/relative/{relativeId}/patients', [RelativeController::class, 'showPatientDetails'])->middleware(['auth:api', 'role:relative,admin']);
+
+//========================== admin route
 
 Route::middleware(['auth:api', 'role:admin'])->prefix('admin')->group(function () {
 
@@ -28,10 +31,10 @@ Route::middleware(['auth:api', 'role:admin'])->prefix('admin')->group(function (
 
 
     Route::apiResource('relatives', RelativeController::class);
-    Route::get('patients/{patient}/relatives', [RelativeController::class, 'getByPatient']);
 });
 
-Route::middleware(['auth:api', 'role:relative'])->group(function () {
+// Route::middleware(['auth:api', 'role:relative'])->group(function () {
 
-    Route::get('relatives/{relative}/patient', [RelativeController::class, 'showPatientDetails']);
-});
+//     Route::get('relatives/{relative}/patient', [RelativeController::class, 'showPatientDetails']);
+// });
+

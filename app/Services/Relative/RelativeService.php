@@ -3,6 +3,7 @@
 namespace App\Services\Relative;
 
 use Exception;
+use App\Models\Patient;
 use App\Models\Relative;
 use Illuminate\Support\Facades\Log;
 use App\Services\Result\ServiceResult;
@@ -52,33 +53,20 @@ class RelativeService
     }
 
 
-    // public function getByPatientId(int $patientId)
-    // {
-    //     try {
 
-    //         return Relative::with('relatives.doctors.user')
-    //             ->where('patient_id', $patientId)
-    //             ->get();
-    //     } catch (Exception $e) {
-    //         Log::error('Failed to create relative: ' . $e->getMessage());
-    //     }
-    // }
 
-    public function getPatientDetailsForRelative(int $relativeId)
-    {
-        try {
-            $relative = Relative::with('patients.doctors.user')->findOrFail($relativeId);
-            // return [
-            //     'success' => true,
-            //     'patient' => $relative->patient
-            // ];
-            if (!$relative) {
-                return new ServiceResult(false, null, "User not found");
-            }
-            return new ServiceResult(true, $relative->patient);
-        } catch (\Exception $e) {
-            Log::error('Failed to get details: ' . $e->getMessage());
-            return new ServiceResult(false, null, "Error:Faild to get details");
-        }
+   public function getPatientDetailsForRelative(int $relativeId)
+{
+    try {
+        $patients = Patient::with('doctors.user')
+            ->where('relative_id', $relativeId)
+            ->get();
+
+        return new ServiceResult(true, $patients);
+    } catch (\Exception $e) {
+        Log::error('Failed to get patient details for relative: ' . $e->getMessage());
+        return new ServiceResult(false, null, "Error: Failed to get patient details");
     }
+}
+
 }

@@ -25,7 +25,6 @@ class RelativeController extends Controller
     {
         $relatives = Relative::all('name', 'relation', 'phone', 'email');
         return RelativeResource::collection($relatives);
-        // return $this->success(RelativeResource::collection($relatives), "This is all Relative", 200);
     }
 
 
@@ -36,7 +35,6 @@ class RelativeController extends Controller
     {
         $relative = $this->relativeService->create($request->validated());
 
-        // return $this->success($relative, 'Relative Create Successfully', 201);
         if ($relative->success) {
             return $this->success([
                 'message' => 'relative create successfully',
@@ -57,7 +55,7 @@ class RelativeController extends Controller
     public function show($id): JsonResponse
     {
         $relative = Relative::findOrFail($id);
-        $relative->load('patient');
+        $relative->load('patients');
 
         return $this->success(new RelativeResource($relative));
     }
@@ -98,25 +96,16 @@ class RelativeController extends Controller
         }
     }
 
-    // public function getByPatient($patientId)
-    // {
-    //     $relatives = $this->relativeService->getByPatientId($patientId);
-
-    //     return $this->success(RelativeResource::collection($relatives));
-    // }
-
-
     public function showPatientDetails($relativeId)
     {
         $result = $this->relativeService->getPatientDetailsForRelative($relativeId);
 
-        if ($result['success']) {
+        if ($result->success) {
             return self::success(
-                new PatientResource($result['patient']),
-                'Patient details retrieved successfully.'
+                PatientResource::collection($result->data),
             );
         }
 
-        return self::error(null, $result['message'], 404);
+        return self::error(null, $result->message, 404);
     }
 }

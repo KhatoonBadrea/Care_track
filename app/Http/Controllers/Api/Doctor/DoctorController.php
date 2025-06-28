@@ -63,7 +63,6 @@ class DoctorController extends Controller
 
 
         $doctor = $this->doctorService->update($doctor, $request->validated());
-        // return new doctorResource($doctor);
         if ($doctor->success) {
             return $this->success([
                 'message' => 'doctor update successfully',
@@ -94,5 +93,4 @@ class DoctorController extends Controller
             : $this->error(null, $deletion->message, 401);
     }
 
-    //test
 }
