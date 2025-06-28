@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\VitalSign;
 
+use App\Models\VitalSign;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\VitalSign\VitalSignService;
 use App\Http\Resources\VitalSign\VitalSignResource;
 use App\Http\Requests\VitalSign\StoreVitalSignRequest;
 use App\Http\Requests\VitalSign\UpdateVitalSignRequest;
-use App\Models\VitalSign;
 
 class VitalSignController extends Controller
 {
@@ -26,7 +26,7 @@ class VitalSignController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-   public function store(StoreVitalSignRequest $request)
+    public function store(StoreVitalSignRequest $request)
     {
 
 

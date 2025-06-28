@@ -14,6 +14,15 @@ class VitalSignResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            
+        // 'patient_id'=>$this->user->patient?->name,
+        'temperature'=>$this->temperature,
+        'heart_rate'=>$this->heart_rate,
+        'blood_pressure_systolic'=>$this->blood_pressure_systolic,
+        'blood_pressure_diastolic'=>$this->blood_pressure_diastolic,
+        'respiratory_rate'=>$this->respiratory_rate,
+        'measured_at'=>$this->measured_at,
+        ];
     }
 }

@@ -22,7 +22,7 @@ class StoreVitalSignRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'patient_id' => 'required|exists:patients,id',
+            // 'patient_id' => 'required|exists:patients,id',
             'temperature' => 'required|numeric|between:34,42',
             'heart_rate' => 'required|integer|between:30,200',
             'blood_pressure_systolic' => 'required|integer|between:70,200',
@@ -36,7 +36,7 @@ class StoreVitalSignRequest extends FormRequest
      protected function prepareForValidation(): void
     {
         if ($this->has('measured_at')) {
-            $formattedDate = date('Y-m-d', strtotime($this->measured_at));
+            $formattedDate = date('Y-m-d H:m:s', strtotime($this->measured_at));
             $this->merge([
                 'measured_at' => $formattedDate,
             ]);

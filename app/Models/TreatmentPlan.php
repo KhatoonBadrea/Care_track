@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TreatmentPlan extends Model
 {
- protected $fillable=[
+    protected $fillable = [
         'patient_id',
         'diagnosis',
         'medications',
@@ -17,6 +17,7 @@ class TreatmentPlan extends Model
     ];
 
     public function patient(): BelongsTo
-{
-    return $this->belongsTo(Patient::class);
-}}
+    {
+        return $this->belongsTo(Patient::class);
+    }
+}

@@ -6,15 +6,17 @@ use Exception;
 use App\Models\VitalSign;
 use Illuminate\Support\Facades\Log;
 use App\Services\Result\ServiceResult;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class VitalSignService
 {
 
     public function create(array $data)
     {
+        $user = JWTAuth::parseToken()->authenticate();
         try {
             $vitalSign = VitalSign::create([
-                'patient_id' => $data['patient_id'],
+                'patient_id' => $user->id,
                 'temperature' => $data['temperature'],
                 'heart_rate' => $data['heart_rate'],
                 'blood_pressure_systolic' => $data['blood_pressure_systolic'],
