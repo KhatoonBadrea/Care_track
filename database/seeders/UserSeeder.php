@@ -27,8 +27,32 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
         ]);
         User::create([
+            'name' => 'anas',
+            'email' => 'anas@example.com',
+            'role' => 'patient',
+            'password' => Hash::make('password'),
+        ]);
+        User::create([
+            'name' => 'maha',
+            'email' => 'maha@example.com',
+            'role' => 'patient',
+            'password' => Hash::make('password'),
+        ]);
+        User::create([
             'name' => 'alaa',
             'email' => 'alaa@example.com',
+            'role' => 'relative',
+            'password' => Hash::make('password'),
+        ]);
+        User::create([
+            'name' => 'ola',
+            'email' => 'ola@example.com',
+            'role' => 'relative',
+            'password' => Hash::make('password'),
+        ]);
+        User::create([
+            'name' => 'alia',
+            'email' => 'alia@example.com',
             'role' => 'relative',
             'password' => Hash::make('password'),
         ]);
@@ -39,14 +63,14 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
         ]);
         User::create([
-            'name' => 'anas',
-            'email' => 'anas@example.com',
-            'role' => 'patient',
+            'name' => 'omar',
+            'email' => 'omar@example.com',
+            'role' => 'doctor',
             'password' => Hash::make('password'),
         ]);
         User::create([
-            'name' => 'omar',
-            'email' => 'omar@example.com',
+            'name' => 'rama',
+            'email' => 'rama@example.com',
             'role' => 'doctor',
             'password' => Hash::make('password'),
         ]);
