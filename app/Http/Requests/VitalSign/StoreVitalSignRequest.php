@@ -28,7 +28,7 @@ class StoreVitalSignRequest extends FormRequest
             'blood_pressure_systolic' => 'required|integer|between:70,200',
             'blood_pressure_diastolic' => 'required|integer|between:40,130',
             'respiratory_rate' => 'required|integer|between:10,60',
-            'measured_at' => 'required|date',
+            // 'measured_at' => 'required|date',
         ];
     }
 

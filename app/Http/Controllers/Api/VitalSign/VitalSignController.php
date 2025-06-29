@@ -9,9 +9,12 @@ use App\Services\VitalSign\VitalSignService;
 use App\Http\Resources\VitalSign\VitalSignResource;
 use App\Http\Requests\VitalSign\StoreVitalSignRequest;
 use App\Http\Requests\VitalSign\UpdateVitalSignRequest;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class VitalSignController extends Controller
 {
+    use AuthorizesRequests;
+
 
     public function __construct(private VitalSignService $vitalSignService) {}
 
@@ -48,10 +51,15 @@ class VitalSignController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(VitalSign $vitalSign)
     {
-        //
+        $this->authorize('view', $vitalSign);
+
+        return $this->success(
+            new VitalSignResource($vitalSign),
+        );
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -59,6 +67,7 @@ class VitalSignController extends Controller
     public function update(UpdateVitalSignRequest $request, VitalSign $vitalSign)
     {
 
+        $this->authorize('update', $vitalSign);
 
         $vitalSign = $this->vitalSignService->update($vitalSign, $request->validated());
         if ($vitalSign->success) {
@@ -80,6 +89,7 @@ class VitalSignController extends Controller
     public function destroy(VitalSign $vitalSign)
     {
 
+        $this->authorize('delete', $vitalSign);
 
         $deletion = $this->vitalSignService->delete($vitalSign);
         return $deletion->success

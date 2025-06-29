@@ -41,7 +41,7 @@ Route::get('/relative/{relativeId}/patients', [RelativeController::class, 'showP
 
 //========================Patient Route
 
-Route::middleware(['auth:api', 'role:patient'])->group(function () {
+Route::middleware(['auth:api'])->group(function () {
 
     Route::apiResource('vitalSign', VitalSignController::class);
 });

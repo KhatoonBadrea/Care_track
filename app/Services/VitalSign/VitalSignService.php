@@ -14,17 +14,24 @@ class VitalSignService
     public function create(array $data)
     {
         $user = JWTAuth::parseToken()->authenticate();
+        $patient = $user->patient;
+
+        if (!$patient) {
+            return new ServiceResult(false, null, 'Patient not found for this user.');
+        }
+
         try {
             $vitalSign = VitalSign::create([
-                'patient_id' => $user->id,
+                'patient_id' => $patient->id,
                 'temperature' => $data['temperature'],
                 'heart_rate' => $data['heart_rate'],
                 'blood_pressure_systolic' => $data['blood_pressure_systolic'],
                 'blood_pressure_diastolic' => $data['blood_pressure_diastolic'],
                 'respiratory_rate' => $data['respiratory_rate'],
-                'measured_at' => $data['measured_at'],
+                'measured_at' =>Now(),
 
             ]);
+            // dd($vitalSign);
             return new ServiceResult(true, $vitalSign);
         } catch (Exception $e) {
             Log::error('Failed to create vitalSign: ' . $e->getMessage());
