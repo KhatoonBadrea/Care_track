@@ -4,12 +4,16 @@ namespace App\Http\Controllers\Api\VitalSign;
 
 use App\Models\VitalSign;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Services\VitalSign\VitalSignService;
 use App\Http\Resources\VitalSign\VitalSignResource;
 use App\Http\Requests\VitalSign\StoreVitalSignRequest;
 use App\Http\Requests\VitalSign\UpdateVitalSignRequest;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Http\Resources\VitalSign\VitalSignAverageResource;
 
 class VitalSignController extends Controller
 {
@@ -21,10 +25,30 @@ class VitalSignController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+     public function index(Request $request)
     {
-        //
+        $user = JWTAuth::parseToken()->authenticate();
+
+        Log::info('ENTERED POLICY VIEW', [
+            'user_id' => $user->id,
+            // 'patient_id' => $vitalSign->patient_id,
+           
+        ]);
+        $result = $this->vitalSignService->index($request->all(), $user);
+
+        if (!$result->success) {
+            return $this->error(null, $result->message);
+        }
+
+        return $this->paginated(
+            $result->data,
+            VitalSignAverageResource::class,
+            'Averages retrieved successfully.'
+        );
     }
+
+
+
 
     /**
      * Store a newly created resource in storage.

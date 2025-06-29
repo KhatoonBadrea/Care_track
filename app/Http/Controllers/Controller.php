@@ -24,21 +24,24 @@ abstract class Controller
         ], $status);
     }
 
-    public static function paginated(LengthAwarePaginator $paginator, $resourceClass, $message = '', $status = 200)
-    {
-        $transformedItems = $resourceClass::collection($paginator->items());
+  public static function paginated(LengthAwarePaginator $paginator, $resourceClass = null, $message = '', $status = 200)
+{
+    $items = $resourceClass
+        ? $resourceClass::collection($paginator->items())
+        : $paginator->items(); 
 
-        return response()->json([
-            'status' => 'success',
-            'message' => $message,
-            'data' => $transformedItems,
-            'pagination' => [
-                'total' => $paginator->total(),
-                'count' => $paginator->count(),
-                'per_page' => $paginator->perPage(),
-                'current_page' => $paginator->currentPage(),
-                'total_pages' => $paginator->lastPage(),
-            ],
-        ], $status);
-    }
+    return response()->json([
+        'status' => 'success',
+        'message' => $message,
+        'data' => $items,
+        'pagination' => [
+            'total' => $paginator->total(),
+            'count' => $paginator->count(),
+            'per_page' => $paginator->perPage(),
+            'current_page' => $paginator->currentPage(),
+            'total_pages' => $paginator->lastPage(),
+        ],
+    ], $status);
+}
+
 }
