@@ -25,14 +25,14 @@ class VitalSignController extends Controller
     /**
      * Display a listing of the resource.
      */
-     public function index(Request $request)
+    public function index(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
 
         Log::info('ENTERED POLICY VIEW', [
             'user_id' => $user->id,
             // 'patient_id' => $vitalSign->patient_id,
-           
+
         ]);
         $result = $this->vitalSignService->index($request->all(), $user);
 
@@ -58,6 +58,7 @@ class VitalSignController extends Controller
 
 
         $vitalSign = $this->vitalSignService->create($request->validated());
+        
         if ($vitalSign->success) {
             return $this->success([
                 'message' => 'vitalSign created successfully',

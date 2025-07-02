@@ -2,11 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\User\UserController;
 use App\Http\Controllers\Api\Doctor\DoctorController;
 use App\Http\Controllers\Api\Patient\PatientController;
 use App\Http\Controllers\Api\Relative\RelativeController;
-use App\Http\Controllers\Api\User\UserController;
 use App\Http\Controllers\Api\VitalSign\VitalSignController;
+use App\Http\Controllers\Api\Notification\NotificationController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -45,3 +46,10 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::apiResource('vitalSign', VitalSignController::class);
 });
+
+
+Route::middleware('auth:api')->get('/notifications', [NotificationController::class, 'index']);
+
+Route::middleware('auth:api')->post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+
+Route::middleware('auth:api')->delete('/notifications/{id}', [NotificationController::class, 'destroy']);
