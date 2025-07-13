@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Doctor;
 use App\Models\Patient;
 use App\Models\TreatmentPlan;
 use Illuminate\Database\Seeder;
@@ -15,8 +16,10 @@ class TreatmentPlansSeeder extends Seeder
     public function run(): void
     {
         $patient = Patient::first();
+        $doctor = Doctor::first();
 
         TreatmentPlan::create([
+            'doctor_id' => $doctor->id,
             'patient_id' => $patient->id,
             'diagnosis' => 'Hypertension Stage 1',
             'medications' => 'Amlodipine 5mg daily',

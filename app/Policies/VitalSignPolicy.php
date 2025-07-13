@@ -71,12 +71,10 @@ class VitalSignPolicy
             return true;
         }
 
-        // إذا كان المستخدم دكتور مشرف على المريض
         if ($user->role === 'doctor' && $vitalSign->patient->doctors->contains('user_id', $user->id)) {
             return true;
         }
         // dd($user->id);
-        // إذا كان المستخدم قريب مرتبط بالمريض
         if ($user->role === 'relative' && $vitalSign->patient->relative?->user_id === $user->id) {
             return true;
         }
@@ -99,7 +97,7 @@ class VitalSignPolicy
     public function update(User $user, VitalSign $vitalSign): bool
     {
         // dd($user->id);
-        return $user->id === $vitalSign->patient_id;
+        return $user->id === $vitalSign->patient->user_id;
     }
 
     /**
@@ -107,7 +105,7 @@ class VitalSignPolicy
      */
     public function delete(User $user, VitalSign $vitalSign): bool
     {
-        return $user->id === $vitalSign->patient_id;
+        return $user->id === $vitalSign->patient->user_id;
     }
 
     /**

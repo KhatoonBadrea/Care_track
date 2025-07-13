@@ -55,7 +55,7 @@ class VitalSign extends Model
     public function scopeFilterByPatientName($query, $name)
     {
         return $query->whereHas('patient.user', function ($q) use ($name) {
-            $q->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($name) . '%']);
+            $q->whereRaw('LOWER(name) = ?', [strtolower($name)]);
         });
     }
 }

@@ -15,9 +15,7 @@ class RelativeService
         try {
 
             $relative = Relative::create($data);
-            // if (!$relative) {
-            //     return new ServiceResult(false, null, "User not found");
-            // }
+
             return new ServiceResult(true, $relative);
         } catch (Exception $e) {
             Log::error('Failed to create relative: ' . $e->getMessage());
@@ -55,18 +53,17 @@ class RelativeService
 
 
 
-   public function getPatientDetailsForRelative(int $relativeId)
-{
-    try {
-        $patients = Patient::with('doctors.user')
-            ->where('relative_id', $relativeId)
-            ->get();
+    public function getPatientDetailsForRelative(int $relativeId)
+    {
+        try {
+            $patients = Patient::with('doctors.user')
+                ->where('relative_id', $relativeId)
+                ->get();
 
-        return new ServiceResult(true, $patients);
-    } catch (\Exception $e) {
-        Log::error('Failed to get patient details for relative: ' . $e->getMessage());
-        return new ServiceResult(false, null, "Error: Failed to get patient details");
+            return new ServiceResult(true, $patients);
+        } catch (\Exception $e) {
+            Log::error('Failed to get patient details for relative: ' . $e->getMessage());
+            return new ServiceResult(false, null, "Error: Failed to get patient details");
+        }
     }
-}
-
 }

@@ -20,6 +20,7 @@ class RelativeResource extends JsonResource
             'relation' => $this->relation,
             'phone' => $this->phone,
             'email' => $this->email,
+            'patients'=>PatientResource::collection($this->whenLoaded('patients')),
         ];
     }
 }

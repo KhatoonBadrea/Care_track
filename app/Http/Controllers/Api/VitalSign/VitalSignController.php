@@ -58,7 +58,7 @@ class VitalSignController extends Controller
 
 
         $vitalSign = $this->vitalSignService->create($request->validated());
-        
+
         if ($vitalSign->success) {
             return $this->success([
                 'message' => 'vitalSign created successfully',

@@ -105,18 +105,12 @@ class PatientController extends Controller
 
     public function destroy(Patient $patient)
     {
-        $this->patientService->delete($patient);
-        if ($patient->success) {
-            return $this->success([
+        $deletion = $this->patientService->delete($patient);
+        return $deletion->success
+            ? $this->success([
                 'message' => 'patient deleted successfully',
-                'data' => new PatientResource($patient->data)
-            ]);
-        } else {
-            return $this->error(
-                null,
-                $patient->message,
-                401
-            );
-        }
+                'data' => new PatientResource($deletion->data)
+            ])
+            : $this->error(null, $deletion->message, 401);
     }
 }

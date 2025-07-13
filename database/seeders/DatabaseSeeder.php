@@ -25,9 +25,8 @@ class DatabaseSeeder extends Seeder
             PatientsSeeder::class,
             RelativesSeeder::class,
             VitalSignsSeeder::class,
-            TreatmentPlansSeeder::class,
-            AlertsSeeder::class,
             DoctorSeeder::class,
+            TreatmentPlansSeeder::class,
         ]);
     }
 }

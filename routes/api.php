@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Patient\PatientController;
 use App\Http\Controllers\Api\Relative\RelativeController;
 use App\Http\Controllers\Api\VitalSign\VitalSignController;
 use App\Http\Controllers\Api\Notification\NotificationController;
+use App\Http\Controllers\Api\TreatmentPlan\TreatmentPlanController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -28,13 +29,13 @@ Route::middleware(['auth:api', 'role:admin'])->prefix('admin')->group(function (
 
     Route::apiResource('patients', PatientController::class);
     Route::post('patients/{patient}/assign-doctors', [PatientController::class, 'assignDoctors']);
-    
-    
+
+
     Route::apiResource('relatives', RelativeController::class);
 });
 
 // =========================Doctor Route
-Route::get( 'doctors/{doctor}',[DoctorController::class, 'show'])->middleware(['auth:api', 'role:doctor,admin']);
+Route::get('doctors/{doctor}', [DoctorController::class, 'show'])->middleware(['auth:api', 'role:doctor,admin']);
 
 //=========================Relative Route
 Route::get('/relative/{relativeId}/patients', [RelativeController::class, 'showPatientDetails'])->middleware(['auth:api', 'role:relative,admin']);
@@ -53,3 +54,7 @@ Route::middleware('auth:api')->get('/notifications', [NotificationController::cl
 Route::middleware('auth:api')->post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 
 Route::middleware('auth:api')->delete('/notifications/{id}', [NotificationController::class, 'destroy']);
+
+//==================Treatment Plan
+Route::apiResource('treatment-plan', TreatmentPlanController::class);
+Route::get('/doctor/patients', [TreatmentPlanController::class, 'LinkedPatient']);

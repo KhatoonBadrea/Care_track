@@ -25,7 +25,6 @@ class VitalSignService
     public function create(array $data): ServiceResult
     {
         $user = JWTAuth::parseToken()->authenticate();
-        // استخدمي auth() بدلاً JWTAuth مباشرة في الخدمة
 
         $patient = $user->patient;
 
@@ -57,7 +56,6 @@ class VitalSignService
         }
     }
 
-    // دوال update, delete, index كما هي
 
     public function checkForAlerts(array $vitalData): bool
     {
@@ -105,6 +103,7 @@ class VitalSignService
     public function index(array $filters, User $user): ServiceResult
     {
         try {
+            // بناء الاستعلام مع الفلاتر
             $query = VitalSign::query()
                 ->filterByRole($user)
                 ->when($filters['from'] ?? null && $filters['to'] ?? null, fn($q) =>
@@ -112,20 +111,36 @@ class VitalSignService
                 ->when($filters['patient_name'] ?? null, fn($q) =>
                 $q->filterByPatientName($filters['patient_name']));
 
-            $groups = $query->with('patient.user')->get()->groupBy('patient_id');
+            // تسجيل الاستعلام للفلترة (اختياري لتصحيح الأخطاء)
+            $averagesQuery = $query
+                ->selectRaw('
+        patient_id,
+        AVG(temperature) as avg_temperature,
+        AVG(heart_rate) as avg_heart_rate,
+        AVG(blood_pressure_systolic) as avg_systolic,
+        AVG(blood_pressure_diastolic) as avg_diastolic
+    ')
+                ->groupBy('patient_id')
+                ->with('patient.user');
 
-            $averages = $groups->map(function ($group) {
-                $first = $group->first();
+            // سجل الاستعلام الحقيقي المعدل:
+            Log::info('Filtered SQL:', [
+                'sql' => $averagesQuery->toSql(),
+                'bindings' => $averagesQuery->getBindings()
+            ]);
+
+            $averages = $averagesQuery->get()->map(function ($item) {
                 return [
-                    'patient_name'     => optional($first->patient->user)->name,
-                    'avg_temperature'  => round($group->avg('temperature'), 2),
-                    'avg_heart_rate'   => round($group->avg('heart_rate'), 2),
-                    'avg_systolic'     => round($group->avg('blood_pressure_systolic'), 2),
-                    'avg_diastolic'    => round($group->avg('blood_pressure_diastolic'), 2),
+                    'patient_name'    => optional($item->patient->user)->name,
+                    'avg_temperature' => round($item->avg_temperature, 2),
+                    'avg_heart_rate'  => round($item->avg_heart_rate, 2),
+                    'avg_systolic'    => round($item->avg_systolic, 2),
+                    'avg_diastolic'   => round($item->avg_diastolic, 2),
                 ];
-            })->values();
+            });
 
-            // Manual pagination
+
+            // التصفح اليدوي
             $perPage = 10;
             $page = request('page', 1);
             $paginated = new \Illuminate\Pagination\LengthAwarePaginator(
