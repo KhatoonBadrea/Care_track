@@ -24,8 +24,21 @@ class TreatmentPlanController extends Controller
      */
     public function index()
     {
-        //
+        $user = JWTAuth::parseToken()->authenticate();
+
+        $result = $this->service->index($user);
+
+        if (!$result->success) {
+            return $this->error(null, $result->message);
+        }
+
+        return $this->paginated(
+            $result->data,
+            TreatmentPlanResource::class,
+            'Treatment plans retrieved successfully.'
+        );
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -69,39 +82,60 @@ class TreatmentPlanController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(TreatmentPlan $treatmentPlan)
     {
-        //
+        $user = JWTAuth::parseToken()->authenticate();
+
+        $result = $this->service->show($user, $treatmentPlan);
+
+        if (!$result->success) {
+            return $this->error(null, $result->message, 403);
+        }
+
+        return $this->success([
+            'message' => 'Treatment plan retrieved successfully.',
+            'data' => new TreatmentPlanResource($result->data),
+        ]);
     }
+
 
     /**
      * Update the specified resource in storage.
      */
-     public function update(UpdateTreatmentPlanRequest $request, TreatmentPlan $TreatmentPlan)
+    public function update(UpdateTreatmentPlanRequest $request, TreatmentPlan $treatmentPlan)
     {
+        $result = $this->service->update($treatmentPlan, $request->validated());
 
-        // $this->authorize('update', $TreatmentPlan);`
-
-        $TreatmentPlan = $this->service->update($TreatmentPlan, $request->validated());
-        if ($TreatmentPlan->success) {
+        if ($result->success) {
             return $this->success([
-                'message' => 'Treatment Plan update successfully',
-                'data' => new TreatmentPlanResource($TreatmentPlan->data)
+                'message' => 'Treatment plan updated successfully.',
+                'data' => new TreatmentPlanResource($result->data),
             ]);
-        } else {
-            return $this->error(
-                null,
-                $TreatmentPlan->message,
-                401
-            );
         }
+
+        return $this->error(
+            null,
+            $result->message,
+            403
+        );
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(TreatmentPlan $treatmentPlan)
     {
-        //
+        $user = JWTAuth::parseToken()->authenticate();
+
+        $result = $this->service->delete($user, $treatmentPlan);
+
+        if (!$result->success) {
+            return $this->error(null, $result->message, 403);
+        }
+
+        return $this->success([
+            'message' => $result->message,
+        ]);
     }
 }
